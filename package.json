@@ -1,0 +1,17 @@
+{
+	"name":"Server",
+	"version":"0.0.0",
+	  "description" : "server for android application"
+},
+
+"dependencies": {
+	"redis":"*",
+	"http":"*",
+	"crypto":"*",
+	"url":"*",
+	"mongodb":"*",
+	"assert":"*",
+	"node-rsa":"*",
+	"querystring":"*"
+
+  }
