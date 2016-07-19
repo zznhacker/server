@@ -82,6 +82,7 @@ http.createServer(function (req, res) {
             });
           });
           res.end('{"status":"success"}');
+          
         }
         else if(status == "viewItem")
         {
