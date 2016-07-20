@@ -1,10 +1,8 @@
 {
 	"name":"Server",
 	"version":"0.0.0",
-	  "description" : "server for android application"
-},
-
-"dependencies": {
+	  "description" : "server for android application",
+	  "dependencies": {
 	"redis":"*",
 	"http":"*",
 	"crypto":"*",
@@ -15,3 +13,6 @@
 	"querystring":"*"
 
   }
+}
+
+
