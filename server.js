@@ -1,9 +1,10 @@
 var redis = require('redis');
 var http = require('http');
+var httpUpload = require('http');
 var express    = require('express')
 var bodyParser = require('body-parser')
 var app = express()
-   app.use(bodyParser.json({ limit: '100mb' }))
+app.use(bodyParser.json({ limit: '100mb' }))
 
 const crypto = require('crypto');
 var url = require("url");
@@ -20,7 +21,6 @@ http.createServer(function (req, res) {
    
     // 设置接收数据编码格式为 UTF-8
     req.setEncoding('utf-8');
-    var stream = fs.createWriteStream("test.jpg");
 	
     var postData = ""; //POST & GET ： name=zzl&email=zzl@sina.com
     // 数据块接收中
@@ -29,10 +29,6 @@ http.createServer(function (req, res) {
     });
     // 数据接收完毕，执行回调函数
     req.addListener("end", function () {
-	stream.once('open', function(fd) {
-	stream.write(postData);
-  	stream.end();
-	});
 
         var params = querystring.parse(postData);//GET & POST  ////解释表单数据部分{name="zzl",email="zzl@sina.com"}
         var status = params["status"];
@@ -148,6 +144,33 @@ http.createServer(function (req, res) {
 }).listen(8080, "10.135.63.17");
 console.log('Server running...');
 
+
+httpUpload.createServer(function (req, res) {
+  if(req.method=="POST")
+  { 
+   
+    // 设置接收数据编码格式为 UTF-8
+    req.setEncoding('utf-8');
+    var stream = fs.createWriteStream("test.jpg");
+  
+    var postData = ""; //POST & GET ： name=zzl&email=zzl@sina.com
+    // 数据块接收中
+    req.addListener("data", function (postDataChunk) {
+        postData += postDataChunk;
+    });
+    // 数据接收完毕，执行回调函数
+    req.addListener("end", function () {
+  stream.once('open', function(fd) {
+    console.log(postData);
+  stream.write(postData);
+    stream.end();
+  });
+});
+  }
+});
+
+
+}).listen(8081, "10.135.63.17");
 
 var insertDocument = function(db,username,password,salt,dbname,callback) {
    db.collection(dbname).insertOne( {
