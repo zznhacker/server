@@ -10,7 +10,8 @@
 	"mongodb":"*",
 	"assert":"*",
 	"node-rsa":"*",
-	"querystring":"*"
+	"querystring":"*",
+	"express":"*"
 
   }
 }

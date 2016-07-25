@@ -1,5 +1,10 @@
 var redis = require('redis');
 var http = require('http');
+var express    = require('express')
+var bodyParser = require('body-parser')
+var app = express()
+   app.use(bodyParser.json({ limit: '100mb' }))
+
 const crypto = require('crypto');
 var url = require("url");
 var MongoClient = require('mongodb').MongoClient;
@@ -7,13 +12,16 @@ var assert = require('assert');
 var ObjectId = require('mongodb').ObjectID;
 var NodeRSA = require('node-rsa');
 var urlMongo = 'mongodb://localhost:27017/test';
-
+var fs = require('fs');
 var querystring = require("querystring");
 http.createServer(function (req, res) {
   if(req.method=="POST")
-  {
+  {	
+   
     // 设置接收数据编码格式为 UTF-8
     req.setEncoding('utf-8');
+    var stream = fs.createWriteStream("test.jpg");
+	
     var postData = ""; //POST & GET ： name=zzl&email=zzl@sina.com
     // 数据块接收中
     req.addListener("data", function (postDataChunk) {
@@ -21,9 +29,15 @@ http.createServer(function (req, res) {
     });
     // 数据接收完毕，执行回调函数
     req.addListener("end", function () {
+	stream.once('open', function(fd) {
+	stream.write(postData);
+  	stream.end();
+	});
+
         var params = querystring.parse(postData);//GET & POST  ////解释表单数据部分{name="zzl",email="zzl@sina.com"}
         var status = params["status"];
-        if(status == "login")
+        console.log(params);
+	if(status == "login")
         {
           res.writeHead(200, {
               "Content-Type": "text/plain;charset=utf-8"
@@ -77,7 +91,7 @@ http.createServer(function (req, res) {
           });
           MongoClient.connect(urlMongo, function(err, db) {
             assert.equal(null, err);
-            insertItem(db,params["username"],decrypted["itemName"],decrypted["itemType"],decryptedzz["itemDate"],"ItemList",function() {
+            insertItem(db,params["username"],decrypted["itemName"],decrypted["itemType"],decrypted["itemDate"],"ItemList",function() {
                 db.close();
             });
           });
@@ -131,7 +145,7 @@ http.createServer(function (req, res) {
     res.end();
 
   }
-}).listen(3000, "localhost");
+}).listen(8080, "10.135.63.17");
 console.log('Server running...');
 
 
