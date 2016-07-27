@@ -136,6 +136,13 @@ http.createServer(function (req, res) {
 
           });
         }
+	else if(status == "imageUpload")
+	{
+
+		fs.writeFile("out.png", jsonObj["file"], "binary", function(err) {
+  		console.log(err); // writes out file without error, but it's not a valid image
+});
+	}
       });
   }
   else if(req.method == "GET")
