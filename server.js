@@ -29,10 +29,25 @@ http.createServer(function (req, res) {
     });
     // 数据接收完毕，执行回调函数
     req.addListener("end", function () {
-
+	
         var params = querystring.parse(postData);//GET & POST  ////解释表单数据部分{name="zzl",email="zzl@sina.com"}
         var status = params["status"];
-        console.log(params);
+	var jsonObj;
+	if (typeof status == 'undefined')
+	{
+		for(var key in params)
+        	{
+			console.log(key);
+			var keyTrans = JSON.parse(key);
+                	if(keyTrans["status"]!='undefined')
+			{
+				jsonObj = keyTrans;
+				status = keyTrans["status"];	
+			}
+        	}
+		console.log(jsonObj["file"]);	
+	}
+        console.log(status);
 	if(status == "login")
         {
           res.writeHead(200, {
@@ -40,7 +55,6 @@ http.createServer(function (req, res) {
           });
           var password = params["password"];
           var username = params["username"];
-
           MongoClient.connect(urlMongo, function(err, db) {
           assert.equal(null, err);
           var cursor =db.collection('Users').find({"username":params["username"],"password":password});
@@ -137,18 +151,14 @@ http.createServer(function (req, res) {
         console.log(o);//回调，所以info可能没法得到o的值，就被res.write输出了
     })
     client.quit();
-    res.write("success");
-    res.end();
-
   }
 }).listen(8080, "10.135.63.17");
-console.log('Server running...');
 
 
 httpUpload.createServer(function (req, res) {
   if(req.method=="POST")
   { 
-   
+	console("uploading mode");   
     // 设置接收数据编码格式为 UTF-8
     req.setEncoding('utf-8');
     var stream = fs.createWriteStream("test.jpg");
@@ -161,15 +171,12 @@ httpUpload.createServer(function (req, res) {
     // 数据接收完毕，执行回调函数
     req.addListener("end", function () {
   stream.once('open', function(fd) {
-    console.log(postData);
+    
   stream.write(postData);
     stream.end();
   });
 });
   }
-});
-
-
 }).listen(8081, "10.135.63.17");
 
 var insertDocument = function(db,username,password,salt,dbname,callback) {
