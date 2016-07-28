@@ -139,10 +139,12 @@ http.createServer(function (req, res) {
 	else if(status == "imageUpload")
 	{
 		var fileName= jsonObj["fileName"];
-
-		fs.writeFile("out.png", jsonObj["file"], "binary", function(err) {
-  		console.log(err); // writes out file without error, but it's not a valid image
-});
+		var inputFile = new Buffer(fileName, "base64");
+		fs.writeFile("out.png", inputFile, function(err) {
+  			console.log(err); // writes out file without error, but it's not a valid image
+		});
+		res.write("upload success", function(err) { res.end(); });
+		
 	}
       });
   }
@@ -163,29 +165,10 @@ http.createServer(function (req, res) {
 }).listen(8080, "10.135.63.17");
 
 
-httpUpload.createServer(function (req, res) {
-  if(req.method=="POST")
-  { 
-	console("uploading mode");   
-    // 设置接收数据编码格式为 UTF-8
-    req.setEncoding('utf-8');
-    var stream = fs.createWriteStream("test.jpg");
   
-    var postData = ""; //POST & GET ： name=zzl&email=zzl@sina.com
-    // 数据块接收中
-    req.addListener("data", function (postDataChunk) {
-        postData += postDataChunk;
-    });
-    // 数据接收完毕，执行回调函数
-    req.addListener("end", function () {
-  stream.once('open', function(fd) {
-    
-  stream.write(postData);
-    stream.end();
-  });
-});
-  }
-}).listen(8081, "10.135.63.17");
+   
+
+
 
 var insertDocument = function(db,username,password,salt,dbname,callback) {
    db.collection(dbname).insertOne( {
