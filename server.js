@@ -29,23 +29,18 @@ http.createServer(function (req, res) {
     });
     // 数据接收完毕，执行回调函数
     req.addListener("end", function () {
-	
+	console.log("postdata is "+postData);
         var params = querystring.parse(postData);//GET & POST  ////解释表单数据部分{name="zzl",email="zzl@sina.com"}
-        var status = params["status"];
-	var jsonObj;
+        var status = params["status"];	
+	
 	if (typeof status == 'undefined')
 	{
-		for(var key in params)
-        	{
-			console.log(key);
-			var keyTrans = JSON.parse(key);
-                	if(keyTrans["status"]!='undefined')
-			{
-				jsonObj = keyTrans;
-				status = keyTrans["status"];	
-			}
-        	}
-		console.log(jsonObj["file"]);	
+		if(req.headers["status"]=='undefined')
+		{
+			res.write("error!", function(err) { res.end(); });
+			
+		}
+		status = req.headers["status"];		
 	}
         console.log(status);
 	if(status == "login")
@@ -136,12 +131,12 @@ http.createServer(function (req, res) {
 
           });
         }
-	else if(status == "imageUpload")
+	else if(status == "upload")
 	{
-		var fileName= jsonObj["fileName"];
-		var inputFile = new Buffer(fileName, "base64");
-		fs.writeFile("out.png", inputFile, function(err) {
-  			console.log(err); // writes out file without error, but it's not a valid image
+		var fileName= new Buffer(postData);
+		
+		fs.writeFile("out.jpeg", fileName, function(err) {
+  			console.log("error is "+err); // writes out file without error, but it's not a valid image
 		});
 		res.write("upload success", function(err) { res.end(); });
 		
